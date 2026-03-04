@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Veldt — Wolfgang Meyer</title>
+  <meta name="description" content="Wolfgang Meyer builds AI-powered apps and systems from Namibia, shipped worldwide. PantryMate, UnitFix, Sonara, SmartBook AI, and Wolfpack AI." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg:        #1a1a0e;
+      --bg2:       #1f1f11;
+      --bg3:       #252514;
+      --gold:      #c8a96e;
+      --gold-dim:  #a08550;
+      --text:      #f0ebe0;
+      --text-muted:#a09880;
+      --border:    rgba(200, 169, 110, 0.18);
+      --card-bg:   rgba(255,255,255,0.035);
+      --radius:    12px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1.25rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: transparent;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(26, 26, 14, 0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      transition: color 0.25s;
+    }
+
+    .nav-links a:hover {
+      color: var(--gold);
+    }
+
+    /* ── HERO ── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      padding: 2rem;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 110%, rgba(200,169,110,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 20% 80%, rgba(120,100,50,0.08) 0%, transparent 60%);
+    }
+
+    /* Floating grass blades */
+    .blade {
+      position: absolute;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to top, rgba(200,169,110,0.35), transparent);
+      transform-origin: bottom center;
+      animation: sway var(--dur, 4s) ease-in-out infinite alternate;
+    }
+
+    @keyframes sway {
+      from { transform: rotate(calc(var(--lean, -4) * 1deg)); }
+      to   { transform: rotate(calc(var(--lean, -4) * -1deg + 8deg)); }
+    }
+
+    /* Floating orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.06;
+      animation: drift var(--od, 12s) ease-in-out infinite alternate;
+    }
+
+    @keyframes drift {
+      from { transform: translate(0, 0); }
+      to   { transform: translate(var(--dx, 30px), var(--dy, -20px)); }
+    }
+
+    .orb1 { width: 500px; height: 500px; background: #c8a96e; top: 10%; left: -10%; --od: 14s; --dx: 40px; --dy: 30px; }
+    .orb2 { width: 400px; height: 400px; background: #8a7040; top: 40%; right: -8%; --od: 18s; --dx: -50px; --dy: -40px; }
+    .orb3 { width: 300px; height: 300px; background: #c8a96e; bottom: 5%; left: 40%; --od: 10s; --dx: 20px; --dy: 10px; opacity: 0.04; }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 780px;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+
+    .hero-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 8vw, 6rem);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.4s forwards;
+    }
+
+    .hero-headline em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.6s forwards;
+    }
+
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      margin-bottom: 2.8rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.5s forwards;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.8s forwards;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--bg);
+      border: 1px solid var(--gold);
+    }
+
+    .btn-primary:hover {
+      background: #d9bb80;
+      border-color: #d9bb80;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(200,169,110,0.25);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(240,235,224,0.25);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      animation: fadeIn 1s ease 1.5s forwards;
+    }
+
+    .scroll-hint span {
+      display: block;
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      margin: 0 auto;
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50%       { opacity: 1;   transform: scaleY(1.1); }
+    }
+
+    /* ── SECTION STYLES ── */
+    section {
+      padding: 7rem 2rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      background: var(--bg2);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .about-photo {
+      position: relative;
+      aspect-ratio: 4/5;
+      border-radius: var(--radius);
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .about-photo::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(200,169,110,0.06) 0%, transparent 60%);
+    }
+
+    .photo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+    }
+
+    .photo-placeholder svg {
+      width: 60px;
+      height: 60px;
+      opacity: 0.3;
+    }
+
+    .about-text p {
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+
+    .about-text p strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .about-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat-item strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--gold);
+    }
+
+    .stat-item span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── PRODUCTS ── */
+    #products {
+      background: var(--bg);
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .product-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .product-card:hover {
+      border-color: rgba(200,169,110,0.4);
+      background: rgba(255,255,255,0.055);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+    }
+
+    .product-card:hover::before {
+      opacity: 1;
+    }
+
+    .product-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(200,169,110,0.12);
+      border: 1px solid rgba(200,169,110,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .product-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .product-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .product-link {
+      font-size: 0.8rem;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .product-link svg {
+      width: 12px;
+      height: 12px;
+      transition: transform 0.2s;
+    }
+
+    .product-card:hover .product-link svg {
+      transform: translate(3px, -3px);
+    }
+
+    /* ── WOLFPACK ── */
+    #wolfpack {
+      background: var(--bg2);
+    }
+
+    .wolfpack-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .wolfpack-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(200,169,110,0.1);
+      border: 1px solid rgba(200,169,110,0.25);
+      border-radius: 100px;
+      padding: 0.4rem 1rem;
+      font-size: 0.75rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .wolfpack-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .wolfpack-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .wolfpack-features li::before {
+      content: '→';
+      color: var(--gold);
+      flex-shrink: 0;
+      margin-top: 0.1em;
+    }
+
+    .wolfpack-visual {
+      position: relative;
+    }
+
+    .wolfpack-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wolfpack-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 80% at 80% 20%, rgba(200,169,110,0.08) 0%, transparent 70%);
+    }
+
+    .wolfpack-glyph {
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      color: rgba(200,169,110,0.15);
+      line-height: 1;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .wolfpack-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--text);
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .wolfpack-sub {
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      position: relative;
+    }
+
+    /* ── AGENCY ── */
+    #agency {
+      background: var(--bg);
+    }
+
+    .agency-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .agency-steps {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin: 3rem 0;
+      flex-wrap: wrap;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 1;
+      min-width: 150px;
+      position: relative;
+      padding: 0 1rem;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 22px;
+      right: -10px;
+      width: 20px;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--gold);
+    }
+
+    .step-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .agency-body {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--bg2);
+      text-align: center;
+    }
+
+    .contact-inner {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .contact-email {
+      display: inline-block;
+      margin-top: 2rem;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      color: var(--gold);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(200,169,110,0.3);
+      padding-bottom: 0.25rem;
+      transition: border-color 0.25s, color 0.25s;
+    }
+
+    .contact-email:hover {
+      border-color: var(--gold);
+      color: #d9bb80;
+    }
+
+    .contact-note {
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+    }
+
+    footer span {
+      color: var(--gold-dim);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 40px;
+      height: 2px;
+      background: var(--gold);
+      margin: 1.5rem 0 2rem;
+      opacity: 0.6;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 5rem 1.5rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .about-photo { aspect-ratio: 4/3; max-height: 280px; }
+      .wolfpack-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .about-stats { gap: 1.5rem; flex-wrap: wrap; }
+      .step:not(:last-child)::after { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-headline { font-size: clamp(2.2rem, 12vw, 3rem); }
+      .cta-group { flex-direction: column; align-items: center; }
+      .btn { width: 100%; max-width: 280px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a class="nav-logo" href="#">Veldt</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#wolfpack">Wolfpack AI</a></li>
+      <li><a href="#agency">Agency</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+
+    <!-- Grass blades -->
+    <div class="blade" style="left:5%;  height:140px; --dur:5.2s; --lean:-5;"></div>
+    <div class="blade" style="left:8%;  height:90px;  --dur:4.1s; --lean:3;"></div>
+    <div class="blade" style="left:13%; height:160px; --dur:6s;   --lean:-3;"></div>
+    <div class="blade" style="left:18%; height:110px; --dur:4.8s; --lean:-6;"></div>
+    <div class="blade" style="left:22%; height:75px;  --dur:3.9s; --lean:2;"></div>
+    <div class="blade" style="left:78%; height:130px; --dur:5.5s; --lean:4;"></div>
+    <div class="blade" style="left:83%; height:95px;  --dur:4.3s; --lean:-2;"></div>
+    <div class="blade" style="left:88%; height:155px; --dur:6.2s; --lean:5;"></div>
+    <div class="blade" style="left:92%; height:80px;  --dur:4.0s; --lean:-4;"></div>
+    <div class="blade" style="left:96%; height:120px; --dur:5.1s; --lean:3;"></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">Namibia · Southern Africa · Worldwide</p>
+      <h1 class="hero-headline">Building from<br>the <em>veldt.</em></h1>
+      <p class="hero-name">Wolfgang Meyer</p>
+      <p class="hero-sub">Apps, AI, and systems built in Namibia — shipped worldwide.</p>
+      <div class="cta-group">
+        <a href="#products" class="btn btn-primary">See my work</a>
+        <a href="#contact" class="btn btn-outline">Work with me</a>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span></span>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-photo">
+          <div class="photo-placeholder">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="32" cy="22" r="12" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M6 58c0-14.359 11.640-26 26-26s26 11.641 26 26" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span>Photo coming soon</span>
+          </div>
+        </div>
+        <div class="about-text">
+          <span class="section-label reveal">About</span>
+          <h2 class="section-title reveal reveal-delay-1">One founder.<br>One vision.</h2>
+          <div class="divider reveal reveal-delay-2"></div>
+          <p class="reveal reveal-delay-2">
+            I build software and AI systems from Namibia. <strong>Not a team. Not an agency. Just me, some AI agents, and a clear vision.</strong>
+          </p>
+          <p class="reveal reveal-delay-3">
+            I find problems worth solving, build the simplest thing that works, and ship it. Then I do it again. The veldt taught me patience and space — I bring both to everything I build.
+          </p>
+          <p class="reveal reveal-delay-4">
+            Based in southern Africa. Thinking globally. Moving fast.
+          </p>
+          <div class="about-stats reveal reveal-delay-4">
+            <div class="stat-item">
+              <strong>4</strong>
+              <span>Products live</span>
+            </div>
+            <div class="stat-item">
+              <strong>1</strong>
+              <span>AI agency</span>
+            </div>
+            <div class="stat-item">
+              <strong>∞</strong>
+              <span>Problems to solve</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products">
+    <div class="container">
+      <span class="section-label reveal">Products</span>
+      <h2 class="section-title reveal reveal-delay-1">Things I've built</h2>
+      <p class="reveal reveal-delay-2" style="color:var(--text-muted); max-width:520px; margin-bottom: 0;">
+        Real apps. Real users. Each one started with a pain point I couldn't ignore.
+      </p>
+      <div class="products-grid">
+        <a href="https://pantrymate.net" target="_blank" rel="noopener" class="product-card reveal reveal-delay-1">
+          <div class="product-icon">🥗</div>
+          <div class="product-name">PantryMate</div>
+          <p class="product-desc">AI-powered pantry and meal planning — stop wasting food, start eating better.</p>
+          <span class="product-link">
+            pantrymate.net
+            <svg viewBox="0 0 12 12" fill="none"><path d="M2 10L10 2M10 2H4M10 2V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </a>
+
+        <a href="https://unitfix.app" target="_blank" rel="noopener" class="product-card reveal reveal-delay-2">
+          <div class="product-icon">📐</div>
+          <div class="product-name">UnitFix</div>
+          <p class="product-desc">Fast, no-fuss unit conversion for people who just need the right number, now.</p>
+          <span class="product-link">
+            unitfix.app
+            <svg viewBox="0 0 12 12" fill="none"><path d="M2 10L10 2M10 2H4M10 2V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </a>
+
+        <a href="#" class="product-card reveal reveal-delay-3">
+          <div class="product-icon">🎵</div>
+          <div class="product-name">Sonara</div>
+          <p class="product-desc">A music app built around how you actually discover and feel music.</p>
+          <span class="product-link" style="color:var(--text-muted);">
+            Coming soon
+          </span>
+        </a>
+
+        <a href="#" class="product-card reveal reveal-delay-4">
+          <div class="product-icon">📚</div>
+          <div class="product-name">SmartBook AI</div>
+          <p class="product-desc">Smarter reading, studying, and understanding — powered by AI.</p>
+          <span class="product-link" style="color:var(--text-muted);">
+            Coming soon
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WOLFPACK AI -->
+  <section id="wolfpack">
+    <div class="container">
+      <div class="wolfpack-inner">
+        <div>
+          <div class="wolfpack-badge reveal">
+            <span>🐺</span> Wolfpack AI
+          </div>
+          <h2 class="section-title reveal reveal-delay-1">Need an AI<br>sales team?</h2>
+          <div class="divider reveal reveal-delay-2"></div>
+          <p class="reveal reveal-delay-2" style="color:var(--text-muted); font-size:1.05rem; line-height:1.8; margin-bottom:0.5rem;">
+            That's Wolfpack. I deploy AI agents that prospect, qualify, and convert — so your human team can close.
+          </p>
+          <ul class="wolfpack-features reveal reveal-delay-3">
+            <li>AI agents that outreach at scale, 24/7</li>
+            <li>Custom-built for your sales process</li>
+            <li>Integrated into your existing stack</li>
+            <li>Measurable results, not demos</li>
+          </ul>
+          <div style="margin-top:2.5rem;" class="reveal reveal-delay-4">
+            <a href="https://bummerland17.github.io/wolfpack-ai" target="_blank" rel="noopener" class="btn btn-primary">
+              Explore Wolfpack AI
+            </a>
+          </div>
+        </div>
+        <div class="wolfpack-visual reveal reveal-delay-2">
+          <div class="wolfpack-card">
+            <div class="wolfpack-glyph">🐺</div>
+            <p class="wolfpack-quote">"Your sales team — powered by AI agents that never sleep."</p>
+            <p class="wolfpack-sub">Wolfpack AI deploys purpose-built agents for outreach, qualification, and pipeline generation. Built and operated by Wolfgang Meyer.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGENCY -->
+  <section id="agency">
+    <div class="container">
+      <div class="agency-inner">
+        <span class="section-label reveal">App Agency</span>
+        <h2 class="section-title reveal reveal-delay-1">From pain point<br>to product.</h2>
+        <div class="divider reveal reveal-delay-2" style="margin-left:auto; margin-right:auto;"></div>
+        <div class="agency-steps reveal reveal-delay-2">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-label">Find a validated<br>pain point</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-label">Build the<br>simplest fix</div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-label">Launch and<br>iterate fast</div>
+          </div>
+        </div>
+        <p class="agency-body reveal reveal-delay-3">
+          I find validated ideas, build them fast, and launch them. No bloat. No committees. Just a working product in front of real users.
+          <br><br>
+          If you have a problem worth solving, let's talk.
+        </p>
+        <a href="mailto:hello@pantrymate.net" class="btn btn-primary reveal reveal-delay-4">Get in touch</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-inner">
+        <span class="section-label reveal">Contact</span>
+        <h2 class="section-title reveal reveal-delay-1">Let's build<br>something real.</h2>
+        <div class="divider reveal reveal-delay-2" style="margin-left:auto; margin-right:auto;"></div>
+        <p class="reveal reveal-delay-2" style="color:var(--text-muted); font-size:1.05rem;">
+          No contact forms. No calendly rabbit holes. Just email.
+        </p>
+        <a href="mailto:hello@pantrymate.net" class="contact-email reveal reveal-delay-3">
+          hello@pantrymate.net
+        </a>
+        <p class="contact-note reveal reveal-delay-4">I read everything.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 <span>Veldt</span> · Wolfgang Meyer · Built in Namibia, shipped worldwide.</p>
+  </footer>
+
+  <script>
+    // Nav scroll effect
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    reveals.forEach(el => observer.observe(el));
+
+    // Subtle parallax on hero orbs
+    document.addEventListener('mousemove', (e) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const dx = (e.clientX - cx) / cx;
+      const dy = (e.clientY - cy) / cy;
+      document.querySelectorAll('.orb').forEach((orb, i) => {
+        const factor = (i + 1) * 6;
+        orb.style.transform = `translate(${dx * factor}px, ${dy * factor}px)`;
+      });
+    }, { passive: true });
+  </script>
+</body>
+</html>
